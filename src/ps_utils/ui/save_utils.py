@@ -2,7 +2,7 @@ import os
 import glob
 import ast
 from functools import partial
-from typing import Callable
+from typing import Callable, Set
 
 import polyscope.imgui as psim
 
@@ -97,3 +97,11 @@ def parse_int_list(s: str) -> list[int]:
         raise ValueError(f"List contains non-int elements: {bad!r}")
 
     return val
+
+
+BASIC_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
+
+
+def check_extension(input_path: str, extensions: Set[str] = BASIC_IMAGE_EXTENSIONS):
+    extension = os.path.splitext(input_path)[1]
+    return extension in BASIC_IMAGE_EXTENSIONS

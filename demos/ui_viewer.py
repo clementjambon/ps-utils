@@ -19,6 +19,10 @@ RES_MAP, RES_INVMAP = get_list_map(RES_VALUES)
 ANIMAL_VALUES = ["cat", "dog", "bunny", "turtle"]
 ANIMAL_MAP, ANIMAL_INVMAP = get_list_map(ANIMAL_VALUES)
 
+# =======================
+# DEMO VIEWER
+# =======================
+
 
 class UiViewer(BaseViewer):
     """
