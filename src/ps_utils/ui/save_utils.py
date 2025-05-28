@@ -1,0 +1,99 @@
+import os
+import glob
+import ast
+from functools import partial
+from typing import Callable
+
+import polyscope.imgui as psim
+
+from ps_utils.ui.key_handler import KEY_HANDLER, KEYMAP
+
+
+def save_popup(
+    popup_name: str,
+    path: str,
+    save_label: str = "Save",
+    confirm_label: str = "Confirm",
+    show_warning: str = True,
+):
+    """
+    Creates a save popup. When hitting `save_label`, a popup will open with the target path.
+    If a file already exists at the target location, the popup will issue a warning (unless `show_warning` is set to False)
+    Returns `requested, path`
+
+    NB: Save popups trigger a KEY_HANDLER lock associated to their name!
+    """
+    requested = False
+
+    if psim.Button(f"{save_label}##{popup_name}"):
+        psim.OpenPopup(f"save_popup##{popup_name}")
+        KEY_HANDLER.lock(popup_name)
+
+    if psim.BeginPopup(f"save_popup##{popup_name}"):
+
+        _, path = psim.InputText(f"path##{popup_name}", path)
+
+        if show_warning and os.path.exists(path):
+            psim.Text("Warning: a file already exists at this location!")
+
+        if (
+            psim.Button(f"{confirm_label}##{popup_name}")
+            or psim.GetIO().KeysDown[KEYMAP["enter"]]
+        ):
+            requested = True
+            KEY_HANDLER.unlock(popup_name)
+            psim.CloseCurrentPopup()
+
+        psim.EndPopup()
+
+    return requested, path
+
+
+def get_next_save_factory(
+    default_folder: str, extension: str | None, prefix: str = "exported"
+) -> Callable[[], str]:
+    """
+    Create a function that crawls a folder for `{prefix}_{:06d}.{extension}` and returns the next valid path.
+    NB: Use `extension` = None for folders.
+    """
+
+    def aux(default_folder: str, extension: str, prefix: str = "exported"):
+        os.makedirs(default_folder, exist_ok=True)
+        all_exported_paths = glob.glob(
+            os.path.join(
+                default_folder,
+                f"{prefix}_*.{extension}" if extension is not None else f"{prefix}_*",
+            )
+        )
+        return os.path.join(
+            default_folder,
+            (
+                f"{prefix}_{len(all_exported_paths):06d}.{extension}"
+                if extension is not None
+                else f"{prefix}_{len(all_exported_paths):06d}"
+            ),
+        )
+
+    return partial(
+        aux, default_folder=default_folder, extension=extension, prefix=prefix
+    )
+
+
+def parse_int_list(s: str) -> list[int]:
+    """
+    Safely parse s into a list of ints.
+    Raises ValueError if s is not a list of ints.
+    DISCLAIMER: this is from ChatGPT
+    """
+    try:
+        val = ast.literal_eval(s)
+    except (ValueError, SyntaxError):
+        raise ValueError(f"Not a valid Python literal: {s!r}")
+
+    if not isinstance(val, list):
+        raise ValueError(f"Expected a list, got {type(val).__name__}")
+    if not all(isinstance(x, int) for x in val):
+        bad = [x for x in val if not isinstance(x, int)]
+        raise ValueError(f"List contains non-int elements: {bad!r}")
+
+    return val
