@@ -31,7 +31,7 @@ class BaseViewer:
         # -----------------------
 
         ps.set_user_callback(self.ps_callback)
-        ps.set_user_callback
+        ps.set_drop_callback(self.ps_drop_callback)
         ps.show()
 
     def ps_init(self) -> None:
@@ -64,6 +64,9 @@ class BaseViewer:
 
         # I usually draw things in a draw function (e.g., rendering buffer)
         self.draw()
+
+    def ps_drop_callback(self, input_path: str) -> None:
+        pass
 
     def gui(self) -> None:
         psim.Text(f"fps: {self.fps:.4f};")
