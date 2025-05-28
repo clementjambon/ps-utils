@@ -16,16 +16,3 @@ def get_list_map(vals: List[Any]):
     fmap = {x: i for i, x in enumerate(vals)}
     imap = {i: x for i, x in enumerate(vals)}
     return fmap, imap
-
-
-def combo_enum(
-    name: str, val: Any, fmap: Dict[Any, int], imap: Dict[int, Any], names: List[str]
-):
-    clicked, idx = psim.Combo(
-        name,
-        fmap[val],
-        names,
-    )
-    if clicked:
-        val = imap[idx]
-    return clicked, val

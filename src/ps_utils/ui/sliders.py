@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 
 import numpy as np
 import polyscope.imgui as psim
@@ -34,9 +34,13 @@ def drag_n(
     for i in range(len(vec)):
         if i > 0:
             psim.SameLine()
-        clicked, vec[i] = psim.DragInt(f"{name}_{i}", vec[i], v_min=v_min, v_max=v_max)
+        clicked, vec[i] = psim.DragInt(
+            f"##{name}_{i}", vec[i], v_min=v_min, v_max=v_max
+        )
         update |= clicked
     psim.PopItemWidth()
+    psim.SameLine()
+    psim.Text(name.split("##")[0])
     return update, vec
 
 
@@ -46,8 +50,8 @@ def input_n(
     v_min: int | float = 0,
     v_max: int | float = 0,
     step: int = 1,
-    width: int = 170,
-    stride: int = 2,
+    width: int = 100,
+    stride: int = 3,
 ):
     """Provides n DragInts side by side."""
     assert len(vec) <= 5 and len(vec) > 0, "input_n takes 1 to 5 components!"
@@ -56,15 +60,17 @@ def input_n(
     for i in range(len(vec)):
         if i > 0 and i % stride != 0:
             psim.SameLine()
-        clicked, vec[i] = psim.InputInt(f"{name}_{i}", vec[i], step=step)
+        clicked, vec[i] = psim.InputInt(f"##{name}_{i}", vec[i], step=step)
         if clicked:
             vec[i] = max(min(v_max, vec[i]), v_min)
         update |= clicked
     psim.PopItemWidth()
+    psim.SameLine()
+    psim.Text(name.split("##")[0])
     return update, vec
 
 
-def exp_sliders(
+def exp_slider(
     name: str,
     val,
     v_min_exp=-5,
@@ -73,7 +79,7 @@ def exp_sliders(
     v_max: int = 1e6,
     item_width: int = 100,
 ):
-    exp = int(np.log10(val)) if val != 0.0 else 0
+    exp = int(np.floor(np.log10(val))) if val != 0.0 else 0
     rel = val / 10**exp
     psim.SetNextItemWidth(item_width)
     update = False
@@ -88,11 +94,24 @@ def exp_sliders(
     return clicked, val
 
 
-def slider_options(name: str, val: int, map: List[int], invmap: Dict[int, int]):
-    assert len(map) == len(invmap)
+def choice_slider(name: str, val: Any, map: Dict[Any, int], imap: Dict[int, Any]):
+    assert len(map) == len(imap)
     clicked, tmp_val = psim.SliderInt(
-        name, invmap[val], v_min=0, v_max=len(map) - 1, format=f"{val}"
+        name, map[val], v_min=0, v_max=len(map) - 1, format=f"{val}"
     )
     if clicked:
-        val = map[tmp_val]
+        val = imap[tmp_val]
+    return clicked, val
+
+
+def choice_combo(
+    name: str, val: Any, fmap: Dict[Any, int], imap: Dict[int, Any], names: List[Any]
+):
+    clicked, idx = psim.Combo(
+        name,
+        fmap[val],
+        names if isinstance(names[0], str) else [str(x) for x in names],
+    )
+    if clicked:
+        val = imap[idx]
     return clicked, val

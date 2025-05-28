@@ -1,0 +1,73 @@
+from argparse import ArgumentParser, Namespace
+import time
+
+
+import polyscope as ps
+import polyscope.imgui as psim
+
+
+class BaseViewer:
+    """
+    Default viewer template with basic abstractions
+    """
+
+    def __init__(self) -> None:
+
+        # -----------------------
+        # Init polyscope
+        # -----------------------
+
+        ps.init()
+        self.ps_init()
+
+        # -----------------------
+        # Init components
+        # -----------------------
+
+        self.post_init()
+
+        # -----------------------
+        # Start polyscope
+        # -----------------------
+
+        ps.set_user_callback(self.ps_callback)
+        ps.set_user_callback
+        ps.show()
+
+    def ps_init(self) -> None:
+        """
+        Initialize Polyscope
+        """
+        ps.set_ground_plane_mode("none")
+        ps.set_max_fps(120)
+        ps.set_window_size(1920, 1080)
+        # Anti-aliasing
+        ps.set_SSAA_factor(4)
+        # Uncomment to prevent polyscope from changing scales (including Gizmo!)
+        # ps.set_automatically_compute_scene_extents(False)
+
+        self.last_time = time.time()
+
+    def post_init(self) -> None:
+        pass
+
+    # `ps_callback` is called every frame by polyscope
+    def ps_callback(self) -> None:
+
+        # Update fps count
+        new_time = time.time()
+        self.fps = 1.0 / (new_time - self.last_time)
+        self.last_time = new_time
+
+        # I usually put all my guy stuff in another function
+        self.gui()
+
+        # I usually draw things in a draw function (e.g., rendering buffer)
+        self.draw()
+
+    def gui(self) -> None:
+        psim.Text(f"fps: {self.fps:.4f};")
+
+    def draw(self) -> None:
+        # TODO: give an example with render buffers
+        pass
