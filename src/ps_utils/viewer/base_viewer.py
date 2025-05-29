@@ -5,6 +5,8 @@ import time
 import polyscope as ps
 import polyscope.imgui as psim
 
+from ps_utils.ui.key_handler import KEY_HANDLER
+
 
 class BaseViewer:
     """
@@ -67,6 +69,9 @@ class BaseViewer:
 
         # I usually draw things in a draw function (e.g., rendering buffer)
         self.draw()
+
+        # Step the global KeyHandler
+        KEY_HANDLER.step()
 
     def ps_drop_callback(self, input_path: str) -> None:
         pass

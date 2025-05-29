@@ -1,4 +1,5 @@
 from typing import List, Dict, Any
+from enum import Enum
 
 import numpy as np
 import polyscope.imgui as psim
@@ -97,7 +98,11 @@ def exp_slider(
 def choice_slider(name: str, val: Any, map: Dict[Any, int], imap: Dict[int, Any]):
     assert len(map) == len(imap)
     clicked, tmp_val = psim.SliderInt(
-        name, map[val], v_min=0, v_max=len(map) - 1, format=f"{val}"
+        name,
+        map[val],
+        v_min=0,
+        v_max=len(map) - 1,
+        format=f"{val.value if isinstance(val, Enum) else val}",
     )
     if clicked:
         val = imap[tmp_val]

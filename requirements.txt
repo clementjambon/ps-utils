@@ -1,4 +1,5 @@
 Pillow
+trimesh
 git+https://github.com/clementjambon/ps-py-plus.git
 git+https://github.com/clementjambon/deepdish.git
 -e .
