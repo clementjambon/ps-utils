@@ -9,46 +9,6 @@ import polyscope.imgui as psim
 from ps_utils.ui.key_handler import KEY_HANDLER, KEYMAP
 
 
-def save_popup(
-    popup_name: str,
-    path: str,
-    save_label: str = "Save",
-    confirm_label: str = "Confirm",
-    show_warning: str = True,
-):
-    """
-    Creates a save popup. When hitting `save_label`, a popup will open with the target path.
-    If a file already exists at the target location, the popup will issue a warning (unless `show_warning` is set to False)
-    Returns `requested, path`
-
-    NB: Save popups trigger a KEY_HANDLER lock associated to their name!
-    """
-    requested = False
-
-    if psim.Button(f"{save_label}##{popup_name}"):
-        psim.OpenPopup(f"save_popup##{popup_name}")
-        KEY_HANDLER.lock(popup_name)
-
-    if psim.BeginPopup(f"save_popup##{popup_name}"):
-
-        _, path = psim.InputText(f"path##{popup_name}", path)
-
-        if show_warning and os.path.exists(path):
-            psim.Text("Warning: a file already exists at this location!")
-
-        if (
-            psim.Button(f"{confirm_label}##{popup_name}")
-            or psim.GetIO().KeysDown[KEYMAP["enter"]]
-        ):
-            requested = True
-            KEY_HANDLER.unlock(popup_name)
-            psim.CloseCurrentPopup()
-
-        psim.EndPopup()
-
-    return requested, path
-
-
 def get_next_save_factory(
     default_folder: str, extension: Optional[str], prefix: str = "exported"
 ) -> Callable[[], str]:

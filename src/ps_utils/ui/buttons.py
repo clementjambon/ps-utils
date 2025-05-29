@@ -1,5 +1,9 @@
 from typing import Tuple
+import os
+
 import polyscope.imgui as psim
+
+from ps_utils.ui.key_handler import KEY_HANDLER, KEYMAP
 
 # DISCLAIMER: colors given by ChatGPT
 GREEN_NORMAL = (0.20, 0.70, 0.20, 1.00)
@@ -44,3 +48,74 @@ def state_button(
     psim.PopStyleColor(3)
 
     return clicked, value
+
+
+def save_popup(
+    popup_name: str,
+    path: str,
+    save_label: str = "Save",
+    confirm_label: str = "Confirm",
+    show_warning: str = True,
+):
+    """
+    Creates a save popup. When hitting `save_label`, a popup will open with the target path.
+    If a file already exists at the target location, the popup will issue a warning (unless `show_warning` is set to False)
+    Returns `requested, path`
+
+    NB: Save popups trigger a KEY_HANDLER lock associated to their name!
+    """
+    requested = False
+
+    if psim.Button(f"{save_label}##{popup_name}"):
+        psim.OpenPopup(f"save_popup##{popup_name}")
+        KEY_HANDLER.lock(popup_name)
+
+    if psim.BeginPopup(f"save_popup##{popup_name}"):
+
+        _, path = psim.InputText(f"path##{popup_name}", path)
+
+        if show_warning and os.path.exists(path):
+            psim.Text("Warning: a file already exists at this location!")
+
+        if (
+            psim.Button(f"{confirm_label}##{popup_name}")
+            or psim.GetIO().KeysDown[KEYMAP["enter"]]
+        ):
+            requested = True
+            KEY_HANDLER.unlock(popup_name)
+            psim.CloseCurrentPopup()
+
+        psim.EndPopup()
+
+    return requested, path
+
+
+# Save as save_popup but for an integer only
+def int_popup(
+    popup_name: str,
+    val: int,
+    val_name: str = "N",
+    button_label: str = "Add",
+    confirm_label: str = "Confirm",
+):
+    requested = False
+
+    if psim.Button(f"{button_label}##{popup_name}"):
+        psim.OpenPopup(f"int_popup##{popup_name}")
+        KEY_HANDLER.lock(popup_name)
+
+    if psim.BeginPopup(f"int_popup##{popup_name}"):
+
+        _, val = psim.InputInt(f"{val_name}##{popup_name}", val)
+
+        if (
+            psim.Button(f"{confirm_label}##{popup_name}")
+            or psim.GetIO().KeysDown[KEYMAP["enter"]]
+        ):
+            requested = True
+            KEY_HANDLER.unlock(popup_name)
+            psim.CloseCurrentPopup()
+
+        psim.EndPopup()
+
+    return requested, val

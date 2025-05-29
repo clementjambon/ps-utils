@@ -46,6 +46,8 @@ class UiViewer(BaseViewer):
         self.save_path = "saved_message.txt"
         self.save_message = "Write a poem here..."
 
+        self.number_popup = 1
+
     def gui(self):
         # Just calling super to get FPS
         super().gui()
@@ -149,6 +151,12 @@ class UiViewer(BaseViewer):
                     )
             _, self.save_message = psim.InputText(
                 "Message##ui_viewer", self.save_message
+            )
+
+            clicked, self.number_popup = int_popup(
+                "Number Popup##ui_viewer",
+                self.number_popup,
+                button_label="Choose a Number",
             )
 
             psim.TreePop()
