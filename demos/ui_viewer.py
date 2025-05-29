@@ -33,6 +33,7 @@ class UiViewer(BaseViewer):
         """
         For every slider or button, we need to create a variable to hold its current state
         """
+        self.state_value = False
         self.slider_3_values = [0, 1, 2]
         self.exp_slider_value = 2.3e-4
         self.choice_slider_value1 = 32
@@ -46,6 +47,13 @@ class UiViewer(BaseViewer):
         self.save_message = "Write a poem here..."
 
     def gui(self):
+
+        # ===============
+        # Buttons
+        # ===============
+        if psim.TreeNode("Buttons##ui_viewer"):
+            clicked, self.state_value = state_button(self.state_value, "Stop", "Train")
+            psim.TreePop()
 
         # ===============
         # SLIDERS & CO
