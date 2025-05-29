@@ -2,7 +2,7 @@ import os
 import glob
 import ast
 from functools import partial
-from typing import Callable, Set
+from typing import Callable, Set, Optional
 
 import polyscope.imgui as psim
 
@@ -50,7 +50,7 @@ def save_popup(
 
 
 def get_next_save_factory(
-    default_folder: str, extension: str | None, prefix: str = "exported"
+    default_folder: str, extension: Optional[str], prefix: str = "exported"
 ) -> Callable[[], str]:
     """
     Create a function that crawls a folder for `{prefix}_{:06d}.{extension}` and returns the next valid path.

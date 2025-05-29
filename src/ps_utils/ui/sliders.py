@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 from enum import Enum
 
 import numpy as np
@@ -14,7 +14,10 @@ SLIDERS_FLOAT = [
 
 
 def slider_n(
-    name: str, vec: List[int | float], v_min: int | float = 0, v_max: int | float = 0
+    name: str,
+    vec: List[Union[int, float]],
+    v_min: Union[int, float] = 0,
+    v_max: Union[int, float] = 0,
 ):
     """Provides n_sliders side by side."""
     assert len(vec) <= 4 and len(vec) > 0, "slider_n takes 1 to 4 components!"
@@ -23,9 +26,9 @@ def slider_n(
 
 def drag_n(
     name: str,
-    vec: List[int | float],
-    v_min: int | float = 0,
-    v_max: int | float = 0,
+    vec: List[Union[int, float]],
+    v_min: Union[int, float] = 0,
+    v_max: Union[int, float] = 0,
     width: int = 100,
 ):
     """Provides n DragInts side by side."""
@@ -47,9 +50,9 @@ def drag_n(
 
 def input_n(
     name: str,
-    vec: List[int | float],
-    v_min: int | float = 0,
-    v_max: int | float = 0,
+    vec: List[Union[int, float]],
+    v_min: Union[int, float] = 0,
+    v_max: Union[int, float] = 0,
     step: int = 1,
     width: int = 100,
     stride: int = 3,

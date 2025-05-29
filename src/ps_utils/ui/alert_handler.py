@@ -1,3 +1,5 @@
+from typing import Optional
+
 import polyscope as ps
 import polyscope.imgui as psim
 
@@ -9,7 +11,9 @@ class AlertHandler:
     """
 
     def __init__(
-        self, popup_name: str = "Alert Popup", background_color: str | None = None
+        self,
+        popup_name: str = "Alert Popup",
+        background_color: Optional[str] = None,
     ) -> None:
         self.popup_name = popup_name
         self.message = ""
