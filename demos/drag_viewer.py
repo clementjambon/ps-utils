@@ -12,6 +12,9 @@ class DragViewer(BaseViewer):
         self.thumbnail = None
 
     def gui(self):
+        # Just calling super to get FPS
+        super().gui()
+
         if self.thumbnail is not None:
             self.thumbnail.gui()
 

@@ -59,6 +59,9 @@ class BaseViewer:
         self.fps = 1.0 / (new_time - self.last_time)
         self.last_time = new_time
 
+        # Step anything that needs to (e.g., trainer, optimizer)
+        self.step()
+
         # I usually put all my guy stuff in another function
         self.gui()
 
@@ -66,6 +69,9 @@ class BaseViewer:
         self.draw()
 
     def ps_drop_callback(self, input_path: str) -> None:
+        pass
+
+    def step(self) -> None:
         pass
 
     def gui(self) -> None:

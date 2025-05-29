@@ -47,6 +47,8 @@ class UiViewer(BaseViewer):
         self.save_message = "Write a poem here..."
 
     def gui(self):
+        # Just calling super to get FPS
+        super().gui()
 
         # ===============
         # Buttons
