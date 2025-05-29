@@ -64,10 +64,10 @@ class BaseViewer:
         # Step anything that needs to (e.g., trainer, optimizer)
         self.step()
 
-        # I usually put all my guy stuff in another function
+        # Display gui components
         self.gui()
 
-        # I usually draw things in a draw function (e.g., rendering buffer)
+        # Draw things, including buffer updates
         self.draw()
 
         # Step the global KeyHandler

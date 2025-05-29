@@ -1,3 +1,4 @@
+.DS_Store
 *.ini
 saved_message.txt
 activate.sh
