@@ -15,6 +15,8 @@ class BaseViewer:
 
     def __init__(self) -> None:
 
+        self.pre_init()
+
         # -----------------------
         # Init polyscope
         # -----------------------
@@ -47,8 +49,12 @@ class BaseViewer:
         ps.set_SSAA_factor(4)
         # Uncomment to prevent polyscope from changing scales (including Gizmo!)
         # ps.set_automatically_compute_scene_extents(False)
+        # ps.set_allow_headless_backends(True)
 
         self.last_time = time.time()
+
+    def pre_init(self) -> None:
+        pass
 
     def post_init(self) -> None:
         pass

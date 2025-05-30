@@ -64,4 +64,4 @@ NB: Adding a new thumbnail will override a previously existing one if a distinct
 ## TODOS:
 
 * Creating a global UI state that can be stored persistently 
-* OpenGL example
+* OpenGL example (both CPU & GPU)
