@@ -11,7 +11,7 @@ import polyscope.imgui as psim
 
 from ps_utils.viewer.base_viewer import BaseViewer
 from ps_utils.ui.buttons import state_button
-from ps_utils.networks.mlp_field import MlpField, normalized_pixel_grid
+from examples.utils.mlp_field import MlpField, normalized_pixel_grid
 
 LR = 1e-3
 NUM_ITERATIONS = 1000
