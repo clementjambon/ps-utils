@@ -29,7 +29,7 @@ class UiViewer(BaseViewer):
     Demo viewer showcasing all the pure UI add-ons
     """
 
-    def post_init(self):
+    def post_init(self, **kwargs):
         """
         For every slider or button, we need to create a variable to hold its current state
         """
