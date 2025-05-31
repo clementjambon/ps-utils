@@ -23,7 +23,7 @@ pip install -r requirements_gpu.txt
 
 ### BaseViewer
 
-`BaseViewer` provides a simple backbone to build your own viewer in very few steps. Check out [Demos](#demos) for concrete examples.
+`BaseViewer` provides a simple backbone to build your own viewer in very few steps. Check out [Examples](#examples) for concrete examples.
 `BaseViewer` automatically initializes `polyscope` and callbacks.
 Initialize your variables by overriding `post_init(...)`.
 
@@ -33,21 +33,21 @@ Every frame, `BaseViewer` calls the following routines in this order
 * `draw(...)` to draw or render anything including direct buffer updates
 
 
-## Demos
+## Examples
 
-Demos can be executed with
+Examples can be executed with
 ```bash
-python demos/xxxx_viewer.py
+python examples/xxxx_viewer.py
 ```
-All demos override `BaseViewer`.
+All examples override `BaseViewer`.
 
 ### UiViewer
 
-`UiViewer` (`demos/ui_viewer.py`) provides additional UI abstractions including buttons, sliders, alert and popup handlers.
+`UiViewer` (`examples/ui_viewer.py`) provides additional UI abstractions including buttons, sliders, alert and popup handlers.
 
 ### DragViewer
 
-`DragViewer` (`demos/drag_viewer.py`) showchases drag-and-drop features.
+`DragViewer` (`examples/drag_viewer.py`) showchases drag-and-drop features.
 When dropped, an image is loaded as a `Thumbnail` via `Thumbnail.from_path(...)`
 It can then be displayed with `thumbnail.gui()` in the GUI loop.
 
