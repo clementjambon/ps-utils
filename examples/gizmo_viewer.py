@@ -19,7 +19,7 @@ class GizmoViewer(BaseViewer):
     Demo viewer showcasing gizmos
     """
 
-    def post_init(self):
+    def post_init(self, **kwargs):
         # Create a mesh
         mesh = trimesh.load(MESH_PATH)
         self.ps_mesh = ps.register_surface_mesh("mesh", mesh.vertices, mesh.faces)

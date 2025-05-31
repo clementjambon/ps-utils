@@ -8,7 +8,7 @@ class DragViewer(BaseViewer):
     Demo viewer showcasing drag-n-drop and image thumbnails
     """
 
-    def post_init(self):
+    def post_init(self, **kwargs):
         self.thumbnail = None
 
     def gui(self):

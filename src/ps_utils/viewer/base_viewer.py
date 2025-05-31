@@ -13,9 +13,9 @@ class BaseViewer:
     Default viewer template with basic abstractions
     """
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
 
-        self.pre_init()
+        self.pre_init(**kwargs)
 
         # -----------------------
         # Init polyscope
@@ -28,7 +28,7 @@ class BaseViewer:
         # Init components
         # -----------------------
 
-        self.post_init()
+        self.post_init(**kwargs)
 
         # -----------------------
         # Start polyscope
@@ -53,10 +53,10 @@ class BaseViewer:
 
         self.last_time = time.time()
 
-    def pre_init(self) -> None:
+    def pre_init(self, **kwargs) -> None:
         pass
 
-    def post_init(self) -> None:
+    def post_init(self, **kwargs) -> None:
         pass
 
     # `ps_callback` is called every frame by polyscope

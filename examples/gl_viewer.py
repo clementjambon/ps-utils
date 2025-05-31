@@ -41,11 +41,11 @@ class GlViewer(BaseViewer):
 
         self.render_buffer = ps.get_quantity_buffer("render_buffer", "colors")
 
-    def pre_init(self):
+    def pre_init(self, **kwargs):
         # Initialize renderer and scene
         self.reset()
 
-    def post_init(self):
+    def post_init(self, **kwargs):
         # Override resolution to square-shaped
         ps.set_window_size(1080, 1080)
         # Create a render buffer to display the result of optimization
