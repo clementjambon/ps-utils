@@ -2,7 +2,7 @@ import polyscope as ps
 import polyscope.imgui as psim
 import numpy as np
 from enum import Enum
-from typing import Tuple
+from typing import Tuple, Optional, Union
 
 from ps_utils.structures import (
     CUBE_VERTICES_NP,
@@ -38,7 +38,7 @@ def create_voxel_set_np(
     bbox_min: float,
     bbox_max: float,
     name: str = "voxel_set",
-    offset: np.ndarray | None = None,
+    offset: Optional[np.ndarray] = None,
 ) -> Tuple[ps.SurfaceMesh, np.ndarray, np.ndarray]:
     # self.voxels = coord_bbox_filter(self.voxels, self.res)
 
@@ -84,10 +84,10 @@ class VoxelSet:
         bbox_min: float,
         bbox_max: float,
         name: str = "voxel_set",
-        offset: np.ndarray | None = None,
-        selection_mask: np.ndarray | None = None,  # initial set of selected voxels
+        offset: Optional[np.ndarray] = None,
+        selection_mask: Optional[np.ndarray] = None,  # initial set of selected voxels
         # UI-related parameters
-        selection_radius: int | float = DEFAULT_SELECTION_RADIUS,
+        selection_radius: Union[int, float] = DEFAULT_SELECTION_RADIUS,
         brush_mode: BrushMode = DEFAULT_BRUSH_MODE,  # (ADD or REMOVE)
         square_brush: bool = True,  # Whether to include voxels in a square or sphere
         base_color: np.ndarray = DEFAULT_BASE_COLOR,
@@ -142,7 +142,7 @@ class VoxelSet:
 
         self.ps_voxels.set_hover_callback(self.hover_callback)
 
-    def update_selection_buffer(self, within_radius: np.ndarray | None = None):
+    def update_selection_buffer(self, within_radius: Optional[np.ndarray] = None):
         current_selection = np.tile(self.base_color[None, :], (len(self.coords), 1))
         current_selection[self.selection_mask] = self.selected_color
 
