@@ -60,8 +60,9 @@ def parse_int_list(s: str) -> list[int]:
 
 
 BASIC_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
+BASIC_MESH_EXTENSIONS = {".ply", ".obj", ".stl"}
 
 
 def check_extension(input_path: str, extensions: Set[str] = BASIC_IMAGE_EXTENSIONS):
     extension = os.path.splitext(input_path)[1]
-    return extension in BASIC_IMAGE_EXTENSIONS
+    return extension in extensions
