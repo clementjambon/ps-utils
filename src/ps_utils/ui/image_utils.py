@@ -22,17 +22,12 @@ class Thumbnail:
         self.preview_quantity.imgui_image(self.preview_size[1], self.preview_size[0])
 
     @staticmethod
-    def from_path(
-        input_path: str,
+    def from_PIL(
+        image: Image.Image,
         name: str = "thumbnail",
         max_preview_h: int = DEFAULT_MAX_PREVIEW_SIZE,
         max_preview_w: int = DEFAULT_MAX_PREVIEW_SIZE,
-    ) -> Thumbnail:
-        # ==========
-        # LOAD
-        # ==========
-        image = Image.open(input_path)
-
+    ):
         # ==========
         # PROCESS
         # ==========
@@ -71,6 +66,20 @@ class Thumbnail:
             preview_quantity=preview_quantity,
             preview_size=preview_size,
         )
+
+    @staticmethod
+    def from_path(
+        input_path: str,
+        name: str = "thumbnail",
+        max_preview_h: int = DEFAULT_MAX_PREVIEW_SIZE,
+        max_preview_w: int = DEFAULT_MAX_PREVIEW_SIZE,
+    ) -> Thumbnail:
+        # ==========
+        # LOAD
+        # ==========
+        image = Image.open(input_path)
+
+        return Thumbnail.from_PIL(image)
 
 
 def load_image(self, path: str):
