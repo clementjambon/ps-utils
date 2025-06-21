@@ -1,5 +1,6 @@
 from collections import defaultdict
 from PIL import Image
+from argparse import ArgumentParser
 
 import numpy as np
 import torch
@@ -11,12 +12,11 @@ import polyscope.imgui as psim
 
 from ps_utils.viewer.base_viewer import BaseViewer
 from ps_utils.ui.buttons import state_button
+from ps_utils.ui.image_utils import Thumbnail
 from examples.utils.mlp_field import MlpField, normalized_pixel_grid
 
-LR = 1e-3
-NUM_ITERATIONS = 1000
-IMAGE_PATH = "data/mit.jpg"
-DEVICE = "cuda"
+LR = 5e-3
+NUM_ITERATIONS = 2500
 
 
 class TrainingViewer(BaseViewer):
@@ -26,14 +26,27 @@ class TrainingViewer(BaseViewer):
 
     def reset(self):
         # Load Image
-        image = Image.open(IMAGE_PATH).convert("RGB")  # RGB only!
+        image = Image.open(self.image_path).convert("RGB")  # RGB only!
         self.image = (
-            transforms.ToTensor()(image).permute((1, 2, 0)).to(DEVICE)
+            transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.CenterCrop(min(image.width, image.height)),
+                    transforms.Resize((self.res, self.res)),
+                ]
+            )(image)
+            .permute((1, 2, 0))
+            .to(self.device)
         )  # Convert to Tensor
         self.height, self.width = self.image.shape[:2]
 
+        # Create a GUI thumbnail
+        self.thumbnail = Thumbnail.from_PIL(image)
+
         # Initialize model and optimizer
-        self.model = MlpField(input_dim=2, output_dim=3, pe_freqs=8).to(DEVICE)
+        self.model = MlpField(
+            input_dim=2, output_dim=3, pe_freqs=8, num_layers=2, hidden_dim=64
+        ).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=LR)
         self.loss_fn = F.mse_loss
         self.i_step = 0
@@ -51,6 +64,11 @@ class TrainingViewer(BaseViewer):
         )
 
         self.render_buffer = ps.get_quantity_buffer("render_buffer", "colors")
+
+    def pre_init(self, device="cpu", res=256, image_path="data/mit.jpg", **kwargs):
+        self.device = device
+        self.res = res
+        self.image_path = image_path
 
     def post_init(self, **kwargs):
         # Override resolution to square-shaped
@@ -70,6 +88,8 @@ class TrainingViewer(BaseViewer):
         # Just calling super to get FPS
         super().gui()
 
+        psim.SeparatorText("Optimization")
+
         psim.Text(f"Iteration: {self.i_step:03d}/{NUM_ITERATIONS:03d}")
 
         _, self.optimizing = state_button(self.optimizing, "Stop", "Train")
@@ -78,16 +98,23 @@ class TrainingViewer(BaseViewer):
         if psim.Button("Reset##training_viewer"):
             self.reset()
 
+        psim.SeparatorText("Target Image")
+
+        self.thumbnail.gui()
+
     @torch.no_grad()
     def draw(self):
         rendered_image = torch.cat(
             [
                 self.pred.detach(),
-                torch.ones((self.height, self.width, 1), device=DEVICE),
+                torch.ones((self.height, self.width, 1), device=self.device),
             ],
             dim=-1,
         )
-        self.render_buffer.update_data_from_device(rendered_image)
+        if self.device == "cpu":
+            self.render_buffer.update_data_from_host(rendered_image.reshape(-1, 4))
+        else:
+            self.render_buffer.update_data_from_device(rendered_image)
 
     def training_step(self):
         # Just a safety guard
@@ -98,7 +125,7 @@ class TrainingViewer(BaseViewer):
         loss_dict = {}
 
         # Sample pixels
-        pixel_pos = normalized_pixel_grid(self.height, self.width, device=DEVICE)
+        pixel_pos = normalized_pixel_grid(self.height, self.width, device=self.device)
 
         # Infer the predicted color
         self.pred = self.model(pixel_pos)
@@ -117,4 +144,11 @@ class TrainingViewer(BaseViewer):
 
 
 if __name__ == "__main__":
-    TrainingViewer()
+    parser = ArgumentParser()
+    parser.add_argument("--device", type=str, choices=["cpu", "cuda"], default="cpu")
+    parser.add_argument("--res", type=int, default=256)
+    parser.add_argument("--image", type=str, default="data/mit.jpg")
+
+    args = parser.parse_args()
+
+    TrainingViewer(device=args.device, res=args.res, image_path=args.image)
