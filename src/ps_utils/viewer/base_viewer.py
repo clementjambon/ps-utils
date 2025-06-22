@@ -13,6 +13,64 @@ class BaseViewer:
     Default viewer template with basic abstractions
     """
 
+    # ===============
+    # INITIALIZATION
+    # ===============
+
+    def pre_init(self, **kwargs) -> None:
+        """
+        Entry point. Called once BEFORE Polyscope is initialized.
+        """
+        pass
+
+    def post_init(self, **kwargs) -> None:
+        """
+        Entry point. Called once AFTER Polyscope is initialized.
+        """
+        pass
+
+    # ===============
+    # EVERY STEP
+    # Order:
+    # 1. `step()`
+    # 2. `gui()`
+    # 3. `draw()`
+    # ===============
+
+    def step(self) -> None:
+        """
+        Called every frame. Use this for training/optimization/etc steps.
+        """
+        pass
+
+    def gui(self) -> None:
+        """
+        Use this for GUI.
+        """
+        psim.Text(f"fps: {self.fps:.4f};")
+
+    def draw(self) -> None:
+        """
+        Use this for rendering (via buffers).
+        """
+        pass
+
+    # ===============
+    # CALLBACKS
+    # ===============
+
+    def ps_drop_callback(self, input_path: str) -> None:
+        """
+        Called when a file is drag-n-dropped.
+        The corresponding path is provided as an argument.
+        """
+        pass
+
+    # ================================================
+    # IMPLEMENTATION
+    # You don't need to look at that in principle ;)
+    # ================================================
+
     def __init__(self, **kwargs) -> None:
 
         self.pre_init(**kwargs)
@@ -44,7 +102,7 @@ class BaseViewer:
         """
         ps.set_ground_plane_mode("none")
         ps.set_max_fps(120)
-        ps.set_window_size(1920, 1080)
+        # ps.set_window_size(1920, 1080)
         # Anti-aliasing
         ps.set_SSAA_factor(4)
         # Uncomment to prevent polyscope from changing scales (including Gizmo!)
@@ -52,12 +110,6 @@ class BaseViewer:
         # ps.set_allow_headless_backends(True)
 
         self.last_time = time.time()
-
-    def pre_init(self, **kwargs) -> None:
-        pass
-
-    def post_init(self, **kwargs) -> None:
-        pass
 
     # `ps_callback` is called every frame by polyscope
     def ps_callback(self) -> None:
@@ -78,16 +130,3 @@ class BaseViewer:
 
         # Step the global KeyHandler
         KEY_HANDLER.step()
-
-    def ps_drop_callback(self, input_path: str) -> None:
-        pass
-
-    def step(self) -> None:
-        pass
-
-    def gui(self) -> None:
-        psim.Text(f"fps: {self.fps:.4f};")
-
-    def draw(self) -> None:
-        # TODO: give an example with render buffers
-        pass
