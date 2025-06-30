@@ -79,7 +79,9 @@ class Thumbnail:
         # ==========
         image = Image.open(input_path)
 
-        return Thumbnail.from_PIL(image)
+        return Thumbnail.from_PIL(
+            image, name=name, max_preview_h=max_preview_h, max_preview_w=max_preview_w
+        )
 
 
 def load_image(self, path: str):
